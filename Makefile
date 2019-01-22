@@ -13,7 +13,8 @@ NAME	=	mysh
 
 CFLAGS	=	-I./include -I$(LIB_PATH)
 
-SRCS	=	./src/main.c
+SRCS	=	./src/main.c \
+		./src/get_next_line.c
 
 LIB_PATH=	src/lib/my/
 

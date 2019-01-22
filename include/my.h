@@ -25,4 +25,8 @@
 #include <fcntl.h>
 #include <stdlib.h>
 
+char *my_strtocpy(char *str, char *src);
+char *get_buf(int fd);
+int size_line(char *buf, int i);
+char *get_next_line(int fd);
 #endif
