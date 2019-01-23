@@ -84,6 +84,13 @@ void my_fork(char **env, char **table)
     }
 }
 
+int l_form(char c)
+{
+    if (c == ' ' || c == '\t')
+        return (1);
+    return (0);
+}
+
 char **fill_table(char *buf)
 {
     int j = 0;
@@ -93,13 +100,13 @@ char **fill_table(char *buf)
     int n = 0;
 
     for (int i = 0; buf[i] != '\0'; i += 1)
-        (!i && buf[i] != ' ') || (i && buf[i - 1] == ' ' && buf[i] != ' ')?
+        (!i && !l_form(buf[i])) || (i && l_form(buf[i - 1]) && !l_form(buf[i]))?
             j += 1:0;
     (table = malloc(sizeof(char *) + (j + 1))) == NULL?exit(84):0;
     for (int k = 0; buf[k] != '\0'; k += 1) {
         (str = malloc(sizeof(char) * (1 + my_strlen(buf)))) == NULL?exit(84):0;
         m = 0;
-        while (buf[k] != '\0' && buf[k] != ' ') {
+        while (buf[k] != '\0' && !l_form(buf[k])) {
             str[m] = buf[k];
             k += 1;
             m += 1;
@@ -185,17 +192,21 @@ int my_cd(char **table, char **env)
 int main(int ac, char **env)
 {
     char *buf;
+    size_t size = 0;
     char **table;
 
     (ac != 1)?exit(84):0;
     while (1) {
-        (buf = malloc(sizeof(char) * 1001)) == NULL?exit(84):0;
-        my_putstr("> ");
-        (buf = get_next_line(0)) == NULL?exit(84):0;
-        if (!my_strcmp(buf, "exit") || !my_strcmp(buf, "ctrl+d")) {
+        (buf = malloc(sizeof(char) * 1001)) == NULL?exit(84):my_putstr("> ");
+        getline(&buf, &size, stdin) == -1?exit(84):0;
+        buf == NULL?exit(84):0;
+        if (!my_strcmp(buf, "exit\n") || !my_strcmp(buf, "exit") ||
+            buf[0] == 0) {
             my_putstr("exit\n");
             exit(0);
-        } else if (buf[0] != '\0') {
+        } else if (buf[0] != '\n') {
+            (my_strlen(buf) && buf[my_strlen(buf) - 1] == '\n')?
+                (buf[my_strlen(buf) - 1] = '\0'):0;
             table = fill_table(buf);
             !my_strcmp(table[0], "cd")?my_cd(table, env):my_fork(env, table);
         }
