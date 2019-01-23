@@ -67,8 +67,8 @@ int size_line(char *buf, int i)
 
 char *get_next_line(int fd)
 {
-    int count = 0;
-    char *buf = NULL;
+    static int count = 0;
+    static char *buf = NULL;
     int i;
     char *dest;
 
