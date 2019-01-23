@@ -57,9 +57,11 @@ int size_line(char *buf, int i)
     int j = 0;
 
     if (buf[i] == '\0')
-        return (-1);
+        return (-2);
     while (buf[i + j] != '\0' && buf[i + j] != '\n')
         j += 1;
+    if (buf[i + j] == '\0' && buf[i + j - 1] != '\n')
+        return (-2);
     return (j);
 }
 
@@ -75,6 +77,8 @@ char *get_next_line(int fd)
     (!buf)?(buf = get_buf(fd)):0;
     if (buf == NULL || size_line(buf, count) == -1)
         return (NULL);
+    if (size_line(buf, count) == -2)
+        return ("ctrl+d");
     dest = malloc(sizeof(char) * (size_line(buf, count) + 1));
     if (dest == NULL)
         return (NULL);

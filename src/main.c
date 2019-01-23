@@ -36,6 +36,8 @@ char **my_env(char **env)
     int k = 0;
     int m = 0;
 
+    if (pars_env(env, 46) == NULL)
+        return (NULL);
     for (int i = 0; env[46][i] != '\0'; i += 1)
         (env[46][i] == ':')?j += 1:0;
     (dest = malloc(sizeof(char *) * (j + 2))) == NULL?exit(84):0;
@@ -123,6 +125,15 @@ char *my_pwd(char *pwd, int j)
     return (str);
 }
 
+char *pars_env(char **env, int nb)
+{
+    int i;
+
+    for (i = 2; env[i] != NULL; i += 1)
+        if (i == nb)
+            return (env[nb]);
+    return (NULL);
+}
 
 char *my_newpwd(char **table, char *pwd, char **env)
 {
@@ -130,19 +141,27 @@ char *my_newpwd(char **table, char *pwd, char **env)
         pwd = my_realloc(pwd, "/");
     if (table[1] != NULL)
         pwd = my_realloc(pwd, table[1]);
-    else
+    else {
+        if (pars_env(env, 23) == NULL) {
+            my_putstr("Error: no such file or directory\n");
+            return (NULL);
+        }
         pwd = my_pwd(env[23], 5);
+    }
     return (pwd);
 }
 
-void my_cd(char **table, char **env)
+int my_cd(char **table, char **env)
 {
     static char *pwd = NULL;
     static char *pwd_act = NULL;
-    char *mem = malloc(sizeof(char) * my_strlen(env[21]));
+    char *mem;
 
-    printf("%s %s %s\n", pwd, env[21], table[1]);
-    pwd_act == NULL?(pwd_act = my_pwd(env[21], 4)):0;
+    pars_env(env, 21) == NULL?my_putstr("Error: no such file or directory\n"):0;
+    if (pars_env(env, 21) == NULL)
+        return (1);
+    pwd_act == NULL?(pwd_act = my_pwd(pars_env(env, 21), 4)):0;
+    mem = malloc(sizeof(char) * my_strlen(env[21]));
     if (table[1] != NULL && !my_strcmp(table[1], "-")) {
         if (pwd != NULL) {
             chdir(pwd);
@@ -152,11 +171,15 @@ void my_cd(char **table, char **env)
         } else
             my_putstr("Error: no such file or directory\n");
     } else {
-        (pwd == NULL)?pwd = my_pwd(env[21], 4):(pwd = my_newpwd(table, pwd, env));
         (table[1] != NULL && table[2] != NULL)?my_putstr("cd: too many arguments\n"):0;
-        (table[1] != NULL)?chdir(table[1]):chdir("~");
+        if (chdir(mem = my_newpwd(table, pwd_act, env)) == -1)
+            my_putstr("Error: no such file or directory\n");
+        else {
+            pwd = pwd_act;
+            pwd_act = mem;
+        }
     }
-    printf("%s %s\n", pwd, env[21]);
+    return (0);
 }
 
 int main(int ac, char **env)
@@ -165,11 +188,11 @@ int main(int ac, char **env)
     char **table;
 
     (ac != 1)?exit(84):0;
-    while(1) {
+    while (1) {
         (buf = malloc(sizeof(char) * 1001)) == NULL?exit(84):0;
         my_putstr("> ");
         (buf = get_next_line(0)) == NULL?exit(84):0;
-        if (!my_strcmp(buf, "exit")) {
+        if (!my_strcmp(buf, "exit") || !my_strcmp(buf, "ctrl+d")) {
             my_putstr("exit\n");
             exit(0);
         } else if (buf[0] != '\0') {

@@ -29,4 +29,12 @@ char *my_strtocpy(char *str, char *src);
 char *get_buf(int fd);
 int size_line(char *buf, int i);
 char *get_next_line(int fd);
+char *my_realloc(char *str, char *src);
+char **my_env(char **env);
+void my_fork(char **env, char **table);
+char **fill_table(char *buf);
+char *my_pwd(char *pwd, int j);
+char *pars_env(char **env, int nb);
+char *my_newpwd(char **table, char *pwd, char **env);
+int my_cd(char **table, char **env);
 #endif
