@@ -37,4 +37,8 @@ char *my_pwd(char *pwd, int j);
 char *pars_env(char **env, int nb);
 char *my_newpwd(char **table, char *pwd, char **env);
 int my_cd(char **table, char **env);
+int l_form(char c);
+char *pars_env(char **env, int nb);
+int parser_env(char **env, int nb);
+char *my_pwd(char *pwd, int j);
 #endif

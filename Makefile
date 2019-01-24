@@ -14,6 +14,8 @@ NAME	=	mysh
 CFLAGS	=	-I./include -I$(LIB_PATH)
 
 SRCS	=	./src/main.c \
+		./src/array.c \
+		./src/parser.c \
 		./src/get_next_line.c
 
 LIB_PATH=	src/lib/my/
