@@ -86,7 +86,7 @@ int my_cd(char **table, char **env)
     return (0);
 }
 
-int main(int ac, char **env)
+int main(int ac, char **av, char **env)
 {
     char *buf;
     size_t size = 0;

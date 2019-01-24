@@ -27,9 +27,7 @@ char *my_pwd(char *pwd, int j)
 
 char *pars_env(char **env, int nb)
 {
-    int i;
-
-    for (i = 2; env[i] != NULL; i += 1)
+    for (int i = 0; env[i] != NULL; i += 1)
         if (i == nb)
             return (env[nb]);
     return (NULL);
