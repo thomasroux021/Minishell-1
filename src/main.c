@@ -95,7 +95,6 @@ int main(int ac, char **av, char **env)
     (ac != 1)?exit(84):0;
     while (1) {
         (buf = malloc(sizeof(char) * 1001)) == NULL?exit(84):my_putstr("> ");
-        getline(&buf, &size, stdin) == -1 || buf == NULL?exit(84):0;
         if (!my_strcmp(buf, "exit\n") || !my_strcmp(buf, "exit") ||
             buf[0] == 0) {
             my_putstr("exit\n");
