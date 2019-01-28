@@ -24,66 +24,45 @@ void my_fork(char **env, char **table)
         (ret == -1)?my_putstr(com):0;
         (ret == -1)?my_putstr(": Command not found\n"):0;
         exit(0);
-    } else {
-        wait4(pid, &status, 0, &usage);
-        (status == 139)?my_putstr("Segmentation fault (core dumped)\n"):0;
     }
+    wait4(pid, &status, 0, &usage);
+    (status == 139)?my_putstr("Segmentation fault (core dumped)\n"):0;
 }
 
-char *my_newpwd(char **table, char *pwd, char **env)
+int my_exit(char *buf)
 {
-    if (pwd[my_strlen(pwd) - 1] != '/')
-        pwd = my_realloc(pwd, "/");
-    if (table[1] != NULL)
-        pwd = my_realloc(pwd, table[1]);
-    else {
-        if (pars_env(env, 23) == NULL) {
-            my_putstr("Error: no such file or directory\n");
-            return (NULL);
-        }
-        pwd = my_pwd(env[23], 5);
+    int dest = 0;
+
+    for (int i = 0; i < 5; i += 1)
+        buf++;
+    if ((dest = my_getnbr(buf)) != -666) {
+        my_putstr("exit\n");
+        exit(dest);
     }
-    return (pwd);
+    my_putstr("exit: Invalid syntax\n");
+    return (-1);
 }
 
-int cd_dash(char **pwd, char **mem, char **pwd_act)
+int my_com(char **table, shell_t *shell, char *buf)
 {
-    if (*pwd != NULL) {
-        if (chdir(*pwd) == -1) {
-            my_putstr("Error: no such file or directory\n");
-            return (1);
-        }
-        *mem = *pwd_act;
-        *pwd = *pwd_act;
-        *pwd_act = *mem;
-    } else
-        my_putstr("Error: no such file or directory\n");
+    if (!my_strcmp(table[0], "exit"))
+        return (my_exit(buf));
+    if (!my_strcmp(table[0], "cd"))
+        return (my_cd(table, shell));
+    if (!my_strcmp(table[0], "env"))
+        return (print_env(table, shell->my_env));
+    if (!my_strcmp(table[0], "unsetenv"))
+        return (my_unsetenv(table, shell));
+    if (!my_strcmp(table[0], "setenv"))
+        return (my_setenv(table, shell));
+    my_fork(shell->my_env, table);
     return (0);
 }
 
-int my_cd(char **table, char **env)
+void my_ctrld(char *str)
 {
-    static char *pwd = NULL;
-    static char *pwd_act = NULL;
-    char *mem;
-
-    if (parser_env(env, 21))
-        return (1);
-    pwd_act == NULL?(pwd_act = my_pwd(pars_env(env, 21), 4)):0;
-    (mem = malloc(sizeof(char) * my_strlen(env[21]))) == NULL?exit(84):0;
-    if (table[1] != NULL && !my_strcmp(table[1], "-")) {
-        cd_dash(&pwd, &mem, &pwd_act);
-    } else {
-        (table[1] != NULL && table[2] != NULL)?
-            my_putstr("cd: too many arguments\n"):0;
-        if (chdir(mem = my_newpwd(table, pwd_act, env)) == -1)
-            my_putstr("Error: no such file or directory\n");
-        else {
-            pwd = pwd_act;
-            pwd_act = mem;
-        }
-    }
-    return (0);
+    my_putstr(str);
+    exit(0);
 }
 
 int main(int ac, char **av, char **env)
@@ -91,21 +70,20 @@ int main(int ac, char **av, char **env)
     char *buf;
     size_t size = 0;
     char **table;
+    shell_t *shell = malloc(sizeof(shell_t));
 
-    (ac != 1)?exit(84):0;
+    (ac != 1 || shell == NULL)?exit(84):0;
+    shell->my_env = cpy_env(env);
+    shell->pwd = NULL;
+    shell->pwd_act = NULL;
     while (1) {
-        (buf = malloc(sizeof(char) * 1001)) == NULL?exit(84):my_putstr("> ");
-        getline(&buf, &size, stdin);
-        if (!my_strcmp(buf, "exit\n") || !my_strcmp(buf, "exit") ||
-            buf[0] == 0) {
-            my_putstr("exit\n");
-            exit(0);
-        } else if (buf[0] != '\n') {
-            (my_strlen(buf) && buf[my_strlen(buf) - 1] == '\n')?
-                (buf[my_strlen(buf) - 1] = '\0'):0;
-            table = fill_table(buf);
-            !my_strcmp(table[0], "cd")?my_cd(table, env):my_fork(env, table);
-        }
+        (buf = malloc(sizeof(char) * 1001)) == NULL?exit(84):0;
+        (isatty(0) == 1)?my_putstr("> "):0;
+        getline(&buf, &size, stdin) == -1?my_ctrld("exit\n"):0;
+        (my_strlen(buf) > 1 && buf[my_strlen(buf) - 1] == '\n')?
+            (buf[my_strlen(buf) - 1] = '\0'):0;
+        table = fill_table(buf);
+        my_com(table, shell, buf);
         free(buf);
     }
 }

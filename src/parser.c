@@ -25,19 +25,28 @@ char *my_pwd(char *pwd, int j)
     return (str);
 }
 
-char *pars_env(char **env, int nb)
+int pars_env(char **env, char *str)
 {
-    for (int i = 0; env[i] != NULL; i += 1)
-        if (i == nb)
-            return (env[nb]);
-    return (NULL);
+    int br = 0;
+
+    for (int i = 0; env[i] != NULL; i += 1) {
+        for (int j = 0; str[j] != '\0' && !br; j += 1)
+            (env[i][j] != '\0' && str[j] == env[i][j])?0:(br = 1);
+        if (!br)
+            return (i);
+        else
+            br = 0;
+    }
+    return (-1);
 }
 
-int parser_env(char **env, int nb)
+int parser_env(char **env, char *str)
 {
-    if (pars_env(env, nb) == NULL) {
+    int mem;
+
+    if ((mem = pars_env(env, str)) == -1) {
         my_putstr("Error: no such file or directory\n");
         return (1);
     }
-    return (0);
+    return (mem);
 }

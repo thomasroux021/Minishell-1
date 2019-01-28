@@ -59,21 +59,21 @@ char **fill_table(char *buf)
     for (int i = 0; buf[i] != '\0'; i += 1)
         (!i && !l_form(buf[i])) || (i && l_form(buf[i - 1]) && !l_form(buf[i]))?
             j += 1:0;
-    (table = malloc(sizeof(char *) + (j + 1))) == NULL?exit(84):0;
+    (table = malloc(sizeof(char *) * (j + 1))) == NULL?exit(84):0;
     return (putstr_array(table, buf));
 }
 
-char **env_toarray(char **env, char **dest)
+char **env_toarray(char **env, char **dest, int path)
 {
     char *str;
     int k = 0;
     int m;
 
-    for (int i = 5; env[46][i] != '\0'; i += 1) {
-        (str = malloc(sizeof(char) * my_strlen(env[46]))) == NULL?exit(84):0;
+    for (int i = 5; env[path][i - 1] != '\0'; i += 1) {
+        (str = malloc(sizeof(char) * my_strlen(env[path]))) == NULL?exit(84):0;
         m = 0;
-        while (env[46][i] != '\0' && env[46][i] != ':') {
-            str[m] = env[46][i];
+        while (env[path][i] != '\0' && env[path][i] != ':') {
+            str[m] = env[path][i];
             m += 1;
             i += 1;
         }
@@ -90,11 +90,12 @@ char **my_env(char **env)
 {
     int j = 0;
     char **dest;
+    int n_path;
 
-    if (pars_env(env, 46) == NULL)
+    if ((n_path = pars_env(env, "PATH=")) == -1)
         return (NULL);
-    for (int i = 0; env[46][i] != '\0'; i += 1)
-        (env[46][i] == ':')?j += 1:0;
-    (dest = malloc(sizeof(char *) * (j + 2))) == NULL?exit(84):0;
-    return (env_toarray(env, dest));
+    for (int i = 0; env[n_path][i] != '\0'; i += 1)
+        (env[n_path][i] == ':')?j += 1:0;
+    (dest = malloc(sizeof(char *) * (j + 4))) == NULL?exit(84):0;
+    return (env_toarray(env, dest, n_path));
 }

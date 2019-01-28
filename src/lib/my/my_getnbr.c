@@ -22,12 +22,12 @@ int my_getnbr(char const *str)
     int num = 0;
 
     while (str[i] != '\0') {
-        if (!neg && str[i] == 45)
+        if (!i && str[i] == 45)
             neg = 1;
-        if (my_char_isnum(str[i]))
+        else if (my_char_isnum(str[i]))
             num = num * 10 + str[i] - 48;
-        else if (num != 0)
-            exit(84);
+        else
+            return (-666);
         i += 1;
     }
     if (neg == 1)

@@ -25,6 +25,21 @@
 #include <fcntl.h>
 #include <stdlib.h>
 
+typedef struct shell_s
+{
+    char **my_env;
+    char *pwd_act;
+    char *pwd;
+    char *mem;
+} shell_t;
+
+int print_env(char **table, char **env);
+int my_unsetenv(char **table, shell_t *shell);
+int my_setenv(char **table, shell_t *shell);
+
+char **cpy_env(char **env);
+int my_cd(char **table, shell_t *s);
+
 char *my_strtocpy(char *str, char *src);
 char *get_buf(int fd);
 int size_line(char *buf, int i);
@@ -34,11 +49,10 @@ char **my_env(char **env);
 void my_fork(char **env, char **table);
 char **fill_table(char *buf);
 char *my_pwd(char *pwd, int j);
-char *pars_env(char **env, int nb);
+int pars_env(char **env, char *str);
 char *my_newpwd(char **table, char *pwd, char **env);
-int my_cd(char **table, char **env);
+int my_cd(char **table, shell_t *shell);
 int l_form(char c);
-char *pars_env(char **env, int nb);
-int parser_env(char **env, int nb);
+int parser_env(char **env, char *str);
 char *my_pwd(char *pwd, int j);
 #endif
