@@ -16,10 +16,11 @@ void my_fork(char **env, char **table)
     char **path_env = my_env(env);
     int ret;
 
-    pid = fork();
-    if (!pid) {
+    signal(SIGINT, handle_sigint_f);
+    if (!(pid = fork())) {
+        isacom(table[0])?(table[0] = my_realloc(path_env[0], com)):0;
         for (int i = 0; table[0] != NULL && path_env[i] != NULL &&
-                (ret = execve(table[0], table, env)) == -1; i += 1)
+            (ret = execve(table[0], table, env)) == -1; i += 1)
             table[0] = my_realloc(path_env[i], com);
         (ret == -1)?my_putstr(com):0;
         (ret == -1)?my_putstr(": Command not found\n"):0;
@@ -45,6 +46,8 @@ int my_exit(char *buf)
 
 int my_com(char **table, shell_t *shell, char *buf)
 {
+    if (buf[0] == '\n')
+        return (-1);
     if (!my_strcmp(table[0], "exit"))
         return (my_exit(buf));
     if (!my_strcmp(table[0], "cd"))
@@ -77,6 +80,7 @@ int main(int ac, char **av, char **env)
     shell->pwd = NULL;
     shell->pwd_act = NULL;
     while (1) {
+        signal(SIGINT, handle_sigint);
         (buf = malloc(sizeof(char) * 1001)) == NULL?exit(84):0;
         (isatty(0) == 1)?my_putstr("> "):0;
         getline(&buf, &size, stdin) == -1?my_ctrld("exit\n"):0;

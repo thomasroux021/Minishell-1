@@ -14,6 +14,7 @@
 
 #include "../src/lib/my/lib.h"
 #include <sys/time.h>
+#include <signal.h>
 #include <sys/resource.h>
 #include <sys/wait.h>
 #include <stddef.h>
@@ -33,12 +34,16 @@ typedef struct shell_s
     char *mem;
 } shell_t;
 
+int isacom(char *str);
 int print_env(char **table, char **env);
 int my_unsetenv(char **table, shell_t *shell);
 int my_setenv(char **table, shell_t *shell);
 
 char **cpy_env(char **env);
 int my_cd(char **table, shell_t *s);
+
+void handle_sigint(int sig);
+void handle_sigint_f(int sig);
 
 char *my_strtocpy(char *str, char *src);
 char *get_buf(int fd);
