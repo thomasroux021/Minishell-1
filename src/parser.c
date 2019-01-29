@@ -19,6 +19,8 @@ char *my_pwd(char *pwd, int j)
     char *str = malloc(sizeof(char) * my_strlen(pwd));
     int i;
 
+    if (str == NULL)
+        exit(84);
     for (i = 0; pwd[i + j]; i += 1)
         str[i] = pwd[i + j];
     str[i] = '\0';
@@ -45,7 +47,7 @@ int parser_env(char **env, char *str)
     int mem;
 
     if ((mem = pars_env(env, str)) == -1) {
-        my_putstr("Error: no such file or directory\n");
+        my_puterror("Error: no such file or directory\n");
         return (1);
     }
     return (mem);

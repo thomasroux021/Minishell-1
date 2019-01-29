@@ -22,12 +22,12 @@ void my_fork(char **env, char **table)
         for (int i = 0; table[0] != NULL && path_env[i] != NULL &&
             (ret = execve(table[0], table, env)) == -1; i += 1)
             table[0] = my_realloc(path_env[i], com);
-        (ret == -1)?my_putstr(com):0;
-        (ret == -1)?my_putstr(": Command not found\n"):0;
+        (ret == -1)?my_puterror(com):0;
+        (ret == -1)?my_puterror(": Command not found\n"):0;
         exit(0);
     }
     wait4(pid, &status, 0, &usage);
-    (status == 139)?my_putstr("Segmentation fault (core dumped)\n"):0;
+    (status == 139)?my_puterror("Segmentation fault (core dumped)\n"):0;
 }
 
 int my_exit(char *buf)
@@ -40,7 +40,7 @@ int my_exit(char *buf)
         my_putstr("exit\n");
         exit(dest);
     }
-    my_putstr("exit: Invalid syntax\n");
+    my_puterror("exit: Invalid syntax\n");
     return (-1);
 }
 

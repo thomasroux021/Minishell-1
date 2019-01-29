@@ -10,7 +10,7 @@
 int print_env(char **table, char **env)
 {
     if (table[1] != NULL) {
-        my_putstr("env: too many arguments\n");
+        my_puterror("env: too many arguments\n");
         return (-1);
     }
     for (int i = 0; env[i] != NULL; i += 1) {
@@ -41,7 +41,7 @@ void my_unalloc(shell_t *shell, int nb)
 int my_unsetenv(char **table, shell_t *shell)
 {
     if (table[1] == NULL) {
-        my_putstr("unsetenv: too few arguments\n");
+        my_puterror("unsetenv: too few arguments\n");
         return (-1);
     }
     for (int i = 1; table[i] != NULL; i += 1) {
@@ -77,7 +77,7 @@ int my_setenv(char **table, shell_t *shell)
     if (table[1] == NULL)
         return (print_env(table, shell->my_env));
     if (table[2] != NULL && table[3] != NULL) {
-        my_putstr("setenv: too many arguments\n");
+        my_puterror("setenv: too many arguments\n");
         return (-1);
     }
     nb = my_envalloc(table[1], shell);

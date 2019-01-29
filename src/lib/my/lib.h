@@ -8,6 +8,8 @@
 #ifndef INCLUDE_LIB
 #define INCLUDE_LIB
 
+#include <unistd.h>
+
 int my_index_of(char c, char *str);
 void my_putchar(char c);
 int my_isneg(int nb);
@@ -18,6 +20,7 @@ void my_swap(int *a, int *b);
 int my_char_isnum(char str);
 char *my_strdup(char const *str);
 int my_putstr(char const *str);
+void my_puterror(char *str);
 int my_strlen(char const *str);
 int my_getnbr(char const *str);
 void my_sort_int_array(int *tab, int size);

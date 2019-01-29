@@ -16,3 +16,8 @@ int my_putstr(char const *str)
         i += 1;
     }
 }
+
+void my_puterror(char *str)
+{
+    write(2, str, my_strlen(str));
+}

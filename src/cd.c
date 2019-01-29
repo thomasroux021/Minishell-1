@@ -33,7 +33,7 @@ char *my_newpwd(char **table, char *pwd, char **env)
         pwd = my_realloc(pwd, table[1]);
     else {
         if (pars_env(env, "HOME=") == -1) {
-            my_putstr("Error: no such file or directory\n");
+            my_puterror("Error: no such file or directory\n");
             return (NULL);
         }
         pwd = my_pwd(env[pars_env(env, "HOME=")], 5);
@@ -52,7 +52,7 @@ int cd_dash(shell_t *shell)
         shell->pwd = shell->pwd_act;
         shell->pwd_act = shell->mem;
     } else
-        my_putstr("Error: no such file or directory\n");
+        my_puterror("Error: no such file or directory\n");
     return (0);
 }
 
@@ -75,7 +75,7 @@ int my_cd(char **table, shell_t *s)
         cd_dash(s);
     } else {
         if (table[1] != NULL && table[2] != NULL)
-            my_putstr("cd: too many arguments\n");
+            my_puterror("cd: too many arguments\n");
         (chdir(s->mem = my_newpwd(table, s->pwd_act, s->my_env)) == -1)?
             perror("Error"):inv_pwd(s);
     }
