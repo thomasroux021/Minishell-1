@@ -47,7 +47,7 @@ int parser_env(char **env, char *str)
     int mem;
 
     if ((mem = pars_env(env, str)) == -1) {
-        my_puterror("Error: no such file or directory\n");
+        my_puterror("Error: No such file or directory\n");
         return (1);
     }
     return (mem);

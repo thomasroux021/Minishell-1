@@ -14,20 +14,21 @@ void my_fork(char **env, char **table)
     pid_t pid;
     char *com = table[0];
     char **path_env = my_env(env);
-    int ret;
+    int ret = -1;
 
     signal(SIGINT, handle_sigint_f);
     if (!(pid = fork())) {
-        isacom(table[0])?(table[0] = my_realloc(path_env[0], com)):0;
+        (isacom(table[0]) && path_env[0] != NULL)?
+            (table[0] = my_realloc(path_env[0], com)):0;
+        path_env[0] == NULL?(ret = execve(table[0], table, env)):0;
         for (int i = 0; table[0] != NULL && path_env[i] != NULL &&
             (ret = execve(table[0], table, env)) == -1; i += 1)
             table[0] = my_realloc(path_env[i], com);
-        (ret == -1)?my_puterror(com):0;
-        (ret == -1)?my_puterror(": Command not found\n"):0;
+        (ret == -1)?my_returnerr(com, ": Command not found.\n"):0;
         exit(0);
     }
     wait4(pid, &status, 0, &usage);
-    (status == 139)?my_puterror("Segmentation fault (core dumped)\n"):0;
+    (status == 139)?my_puterror("Segmentation fault\n"):0;
 }
 
 int my_exit(char *buf)

@@ -30,3 +30,9 @@ int isacom(char *str)
     }
     return (1);
 }
+
+int my_return(char *str)
+{
+    my_puterror(str);
+    return (-1);
+}

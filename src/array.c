@@ -92,8 +92,11 @@ char **my_env(char **env)
     char **dest;
     int n_path;
 
-    if ((n_path = pars_env(env, "PATH=")) == -1)
-        return (NULL);
+    if ((n_path = pars_env(env, "PATH=")) == -1) {
+        (dest = malloc(sizeof(char *) * 1)) == NULL?exit(84):0;
+        dest[0] = NULL;
+        return (dest);
+    }
     for (int i = 0; env[n_path][i] != '\0'; i += 1)
         (env[n_path][i] == ':')?j += 1:0;
     (dest = malloc(sizeof(char *) * (j + 4))) == NULL?exit(84):0;
