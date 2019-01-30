@@ -31,7 +31,7 @@ void my_fork(char **env, char **table)
     (status == 139)?my_puterror("Segmentation fault\n"):0;
 }
 
-int my_exit(char *buf)
+int my_exit(char *buf, shell_t *s, char **table)
 {
     int dest = 0;
 
@@ -39,6 +39,15 @@ int my_exit(char *buf)
         buf++;
     if ((dest = my_getnbr(buf)) != -666) {
         my_putstr("exit\n");
+        for (int i = 0; table[i] != NULL; i += 1)
+            free(table[i]);
+        free(table);
+        for (int i = 0; s->my_env[i] != NULL; i += 1)
+            free(s->my_env[i]);
+        free(s->my_env);
+        s->pwd != NULL?free(s->pwd):0;
+        s->pwd_act != NULL?free(s->pwd_act):0;
+        free(s);
         exit(dest);
     }
     my_puterror("exit: Invalid syntax\n");
@@ -50,7 +59,7 @@ int my_com(char **table, shell_t *shell, char *buf)
     if (buf[0] == '\n')
         return (-1);
     if (!my_strcmp(table[0], "exit"))
-        return (my_exit(buf));
+        return (my_exit(buf, shell, table));
     if (!my_strcmp(table[0], "cd"))
         return (my_cd(table, shell));
     if (!my_strcmp(table[0], "env"))
