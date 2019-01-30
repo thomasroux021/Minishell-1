@@ -16,7 +16,6 @@ CFLAGS	=	-I./include -I$(LIB_PATH)
 SRCS	=	./src/main.c \
 		./src/array.c \
 		./src/parser.c \
-		./src/get_next_line.c \
 		./src/signal.c \
 		./src/alpha.c \
 		./src/cd.c \

@@ -8,10 +8,6 @@
 #ifndef MY_H
 #define MY_H
 
-#ifndef READ_SIZE
-#define READ_SIZE 10
-#endif
-
 #include "../src/lib/my/lib.h"
 #include <sys/time.h>
 #include <signal.h>
@@ -50,10 +46,6 @@ void my_returnerr(char *str, char *err);
 int str_alphanum(char *str);
 int char_isalpha(char c);
 
-char *my_strtocpy(char *str, char *src);
-char *get_buf(int fd);
-int size_line(char *buf, int i);
-char *get_next_line(int fd);
 char *my_realloc(char *str, char *src);
 char **my_env(char **env);
 void my_fork(char **env, char **table);
