@@ -13,6 +13,8 @@ int char_isalpha(char c)
         return (1);
     if (c >= 97 && c <= 122)
         return (2);
+    if (c == 95)
+        return (3);
     return (0);
 }
 
