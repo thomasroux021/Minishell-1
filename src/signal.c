@@ -36,3 +36,9 @@ int my_return(char *str)
     my_puterror(str);
     return (-1);
 }
+
+void print_err(int s)
+{
+        my_puterror(strsignal(s - 128));
+        my_puterror("\n");
+}

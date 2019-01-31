@@ -9,8 +9,7 @@
 
 void my_fork(char **env, char **table)
 {
-    struct rusage usage;
-    int status;
+    int s;
     pid_t pid;
     char *com = table[0];
     char **path_env = my_env(env);
@@ -27,8 +26,8 @@ void my_fork(char **env, char **table)
         (ret == -1)?my_returnerr(com, ": Command not found.\n"):0;
         exit(0);
     }
-    wait4(pid, &status, 0, &usage);
-    (status == 139)?my_puterror("Segmentation fault\n"):0;
+    waitpid(pid, &s, 0);
+    ((s > 128 && s < 256))?print_err(s):0;
 }
 
 int my_exit(char *buf, shell_t *s, char **table)
