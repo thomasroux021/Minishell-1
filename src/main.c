@@ -7,7 +7,7 @@
 
 #include "my.h"
 
-void my_fork(char **env, char **table, shell_t *shell)
+void my_fork(char **env, char **table)
 {
     int s;
     pid_t pid;
@@ -16,10 +16,9 @@ void my_fork(char **env, char **table, shell_t *shell)
     int ret = -1;
 
     signal(SIGINT, handle_sigint_f);
-    shell->ex_s = 0;
     if (!(pid = fork())) {
         (!is_dir(table[0]) || (access(table[0], X_OK) == -1 && is_dir(table[0])
-            != -1))?my_returnerr(table[0], ": Permission denied\n"):0;
+            != -1))?my_returnerr(table[0], ": Permission denied.\n"):0;
         (isacom(table[0]))?(table[0] = my_realloc("abcde", com)):0;
         path_env[0] == NULL?(ret = execve(table[0], table, env)):0;
         for (int i = 0; table[0] != NULL && path_env[i] != NULL &&
@@ -28,7 +27,7 @@ void my_fork(char **env, char **table, shell_t *shell)
         (ret == -1)?my_returnerr(com, ": Command not found.\n"):0;
     }
     waitpid(pid, &s, 0);
-    (WIFSIGNALED(s))?print_err(s, shell):0;
+    (WIFSIGNALED(s))?print_err(s):0;
 }
 
 int my_exit(char *buf, shell_t *s, char **table)
@@ -68,14 +67,14 @@ int my_com(char **table, shell_t *shell, char *buf)
         return (my_unsetenv(table, shell));
     if (!my_strcmp(table[0], "setenv"))
         return (my_setenv(table, shell));
-    my_fork(shell->my_env, table, shell);
+    my_fork(shell->my_env, table);
     return (0);
 }
 
-void my_ctrld(char *str, shell_t *s)
+void my_ctrld(char *str)
 {
     my_putstr(str);
-    exit(s->ex_s);
+    exit(0);
 }
 
 int main(int ac, char **av, char **env)
@@ -92,7 +91,7 @@ int main(int ac, char **av, char **env)
         signal(SIGINT, handle_sigint);
         (buf = malloc(sizeof(char) * 1001)) == NULL?exit(84):0;
         (isatty(0) == 1)?my_putstr("> "):0;
-        getline(&buf, &size, stdin) == -1?my_ctrld("exit\n", shell):0;
+        getline(&buf, &size, stdin) == -1?my_ctrld("exit\n"):0;
         (my_strlen(buf) > 1 && buf[my_strlen(buf) - 1] == '\n')?
             (buf[my_strlen(buf) - 1] = '\0'):0;
         table = fill_table(buf);

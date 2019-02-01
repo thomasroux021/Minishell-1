@@ -18,7 +18,6 @@ void init_shell(shell_t *shell)
 {
     shell->pwd = NULL;
     shell->pwd_act = NULL;
-    shell->ex_s = 0;
 }
 
 char *my_pwd(char *pwd, int j)

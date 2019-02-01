@@ -39,13 +39,12 @@ int my_return(char *str)
     return (-1);
 }
 
-void print_err(int s, shell_t *shell)
+void print_err(int s)
 {
     if (WTERMSIG(s) + 128 != 136)
         my_puterror(strsignal(WTERMSIG(s)));
     else
         my_puterror("FLoating exception");
-    shell->ex_s = WTERMSIG(s) + 128;
     if (WCOREDUMP(s))
         my_puterror(" (core dumped)\n");
     else
