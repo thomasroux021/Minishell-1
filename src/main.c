@@ -27,7 +27,7 @@ void my_fork(char **env, char **table)
         exit(0);
     }
     waitpid(pid, &s, 0);
-    ((s > 128 && s < 256))?print_err(s):0;
+    (WIFSIGNALED(s))?print_err(s):0;
 }
 
 int my_exit(char *buf, shell_t *s, char **table)

@@ -39,6 +39,9 @@ int my_return(char *str)
 
 void print_err(int s)
 {
-        my_puterror(strsignal(s - 128));
+    my_puterror(strsignal(WTERMSIG(s)));
+    if (WCOREDUMP(s))
+        my_puterror(" (core dumped)\n");
+    else
         my_puterror("\n");
 }

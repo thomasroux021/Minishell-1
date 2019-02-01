@@ -13,6 +13,7 @@
 #include <signal.h>
 #include <sys/resource.h>
 #include <sys/wait.h>
+#include <string.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -41,6 +42,7 @@ int my_cd(char **table, shell_t *s);
 void handle_sigint(int sig);
 void handle_sigint_f(int sig);
 int my_return(char *str);
+void print_err(int s);
 
 void my_returnerr(char *str, char *err);
 int str_alphanum(char *str);
