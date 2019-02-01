@@ -24,6 +24,7 @@ void my_fork(char **env, char **table)
         for (int i = 0; table[0] != NULL && path_env[i] != NULL &&
             (ret = execve(table[0], table, env)) == -1; i += 1)
             table[0] = my_realloc(path_env[i], com);
+        ret = execve(table[0], table, env);
         (ret == -1)?my_returnerr(com, ": Command not found.\n"):0;
     }
     waitpid(pid, &s, 0);
