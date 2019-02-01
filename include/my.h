@@ -48,6 +48,7 @@ void my_returnerr(char *str, char *err);
 int str_alphanum(char *str);
 int char_isalpha(char c);
 int is_dir(char *file);
+char **my_pwdenv(void);
 
 char *my_realloc(char *str, char *src);
 char **my_env(char **env);

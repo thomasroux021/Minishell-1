@@ -45,7 +45,7 @@ int is_dir(char *file)
     return (1);
 }
 
-char **my_pwdenv()
+char **my_pwdenv(void)
 {
     char **str = malloc(sizeof(char *) * 3);
 
