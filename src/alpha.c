@@ -31,4 +31,16 @@ void my_returnerr(char *str, char *err)
 {
     my_puterror(str);
     my_puterror(err);
+    exit(0);
+}
+
+int is_dir(char *file)
+{
+    struct stat fs;
+
+    if (lstat(file, &fs) == -1)
+        return (-1);
+    if (S_ISDIR(fs.st_mode))
+        return (0);
+    return (1);
 }

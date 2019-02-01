@@ -23,12 +23,14 @@ void handle_sigint_f(int sig)
 
 int isacom(char *str)
 {
-    for (int i = 0; str[i]; i += 1) {
-        if ((!i && str[i] == '/') ||
-            (i == 1 && str[i] == '/' && str[i - 1] == '.'))
-            return (0);
-    }
-    return (1);
+    int j = 0;
+
+    for (int i = 0; str[i]; i += 1)
+        if (str[i] == '/')
+            j += 1;
+    if (!j)
+        return (1);
+    return (0);
 }
 
 int my_return(char *str)
@@ -39,7 +41,10 @@ int my_return(char *str)
 
 void print_err(int s, shell_t *shell)
 {
-    my_puterror(strsignal(WTERMSIG(s)));
+    if (WTERMSIG(s) + 128 != 136)
+        my_puterror(strsignal(WTERMSIG(s)));
+    else
+        my_puterror("FLoating exception");
     shell->ex_s = WTERMSIG(s) + 128;
     if (WCOREDUMP(s))
         my_puterror(" (core dumped)\n");

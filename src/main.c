@@ -18,14 +18,14 @@ void my_fork(char **env, char **table, shell_t *shell)
     signal(SIGINT, handle_sigint_f);
     shell->ex_s = 0;
     if (!(pid = fork())) {
-        (isacom(table[0]) && path_env[0] != NULL)?
-            (table[0] = my_realloc(path_env[0], com)):0;
+        (!is_dir(table[0]) || (access(table[0], X_OK) == -1 && is_dir(table[0])
+            != -1))?my_returnerr(table[0], ": Permission denied\n"):0;
+        (isacom(table[0]))?(table[0] = my_realloc("abcde", com)):0;
         path_env[0] == NULL?(ret = execve(table[0], table, env)):0;
         for (int i = 0; table[0] != NULL && path_env[i] != NULL &&
             (ret = execve(table[0], table, env)) == -1; i += 1)
             table[0] = my_realloc(path_env[i], com);
         (ret == -1)?my_returnerr(com, ": Command not found.\n"):0;
-        exit(0);
     }
     waitpid(pid, &s, 0);
     (WIFSIGNALED(s))?print_err(s, shell):0;
