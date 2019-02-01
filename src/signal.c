@@ -37,9 +37,10 @@ int my_return(char *str)
     return (-1);
 }
 
-void print_err(int s)
+void print_err(int s, shell_t *shell)
 {
     my_puterror(strsignal(WTERMSIG(s)));
+    shell->ex_s = WTERMSIG(s) + 128;
     if (WCOREDUMP(s))
         my_puterror(" (core dumped)\n");
     else

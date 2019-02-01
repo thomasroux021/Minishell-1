@@ -7,7 +7,7 @@
 
 #include "my.h"
 
-void my_fork(char **env, char **table)
+void my_fork(char **env, char **table, shell_t *shell)
 {
     int s;
     pid_t pid;
@@ -16,6 +16,7 @@ void my_fork(char **env, char **table)
     int ret = -1;
 
     signal(SIGINT, handle_sigint_f);
+    shell->ex_s = 0;
     if (!(pid = fork())) {
         (isacom(table[0]) && path_env[0] != NULL)?
             (table[0] = my_realloc(path_env[0], com)):0;
@@ -27,7 +28,7 @@ void my_fork(char **env, char **table)
         exit(0);
     }
     waitpid(pid, &s, 0);
-    (WIFSIGNALED(s))?print_err(s):0;
+    (WIFSIGNALED(s))?print_err(s, shell):0;
 }
 
 int my_exit(char *buf, shell_t *s, char **table)
@@ -67,14 +68,14 @@ int my_com(char **table, shell_t *shell, char *buf)
         return (my_unsetenv(table, shell));
     if (!my_strcmp(table[0], "setenv"))
         return (my_setenv(table, shell));
-    my_fork(shell->my_env, table);
+    my_fork(shell->my_env, table, shell);
     return (0);
 }
 
-void my_ctrld(char *str)
+void my_ctrld(char *str, shell_t *s)
 {
     my_putstr(str);
-    exit(0);
+    exit(s->ex_s);
 }
 
 int main(int ac, char **av, char **env)
@@ -86,13 +87,12 @@ int main(int ac, char **av, char **env)
 
     (ac != 1 || shell == NULL)?exit(84):0;
     shell->my_env = cpy_env(env);
-    shell->pwd = NULL;
-    shell->pwd_act = NULL;
+    init_shell(shell);
     while (1) {
         signal(SIGINT, handle_sigint);
         (buf = malloc(sizeof(char) * 1001)) == NULL?exit(84):0;
         (isatty(0) == 1)?my_putstr("> "):0;
-        getline(&buf, &size, stdin) == -1?my_ctrld("exit\n"):0;
+        getline(&buf, &size, stdin) == -1?my_ctrld("exit\n", shell):0;
         (my_strlen(buf) > 1 && buf[my_strlen(buf) - 1] == '\n')?
             (buf[my_strlen(buf) - 1] = '\0'):0;
         table = fill_table(buf);

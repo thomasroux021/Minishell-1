@@ -29,6 +29,7 @@ typedef struct shell_s
     char *pwd_act;
     char *pwd;
     char *mem;
+    int ex_s;
 } shell_t;
 
 int isacom(char *str);
@@ -42,7 +43,7 @@ int my_cd(char **table, shell_t *s);
 void handle_sigint(int sig);
 void handle_sigint_f(int sig);
 int my_return(char *str);
-void print_err(int s);
+void print_err(int s, shell_t *shell);
 
 void my_returnerr(char *str, char *err);
 int str_alphanum(char *str);
@@ -50,13 +51,14 @@ int char_isalpha(char c);
 
 char *my_realloc(char *str, char *src);
 char **my_env(char **env);
-void my_fork(char **env, char **table);
+void my_fork(char **env, char **table, shell_t *shell);
 char **fill_table(char *buf);
 char *my_pwd(char *pwd, int j);
 int pars_env(char **env, char *str);
 char *my_newpwd(char **table, char *pwd, char **env);
 int my_cd(char **table, shell_t *shell);
 int l_form(char c);
+void init_shell(shell_t *s);
 int parser_env(char **env, char *str);
 char *my_pwd(char *pwd, int j);
 #endif
