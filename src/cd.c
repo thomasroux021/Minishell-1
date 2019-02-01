@@ -27,17 +27,19 @@ char **cpy_env(char **env)
 
 char *my_newpwd(char **table, char *pwd, char **env)
 {
+    if (table[1] != NULL && my_strcmp(table[1], "~") && is_dir(table[1])) {
+        my_puterror(table[1]);
+        my_puterror(": Not a directory.\n");
+        return (NULL);
+    }
     if (pwd[my_strlen(pwd) - 1] != '/')
         pwd = my_realloc(pwd, "/");
-    if (table[1] != NULL) {
-        if (!my_strcmp(table[1], "~")) {
-            my_puterror("No $home variable set.\n");
-            return (NULL);
-        }
-        pwd = my_realloc(pwd, table[1]);
+    if (table[1] != NULL && my_strcmp(table[1], "~")) {
+        pwd = (table[1][0] == '/')?table[1]:my_realloc(pwd, table[1]);
     } else {
         if (pars_env(env, "HOME=") == -1) {
-            my_puterror("Error: No home directory.\n");
+            (table[1] == NULL)?my_puterror("Error: No home directory.\n"):
+                my_puterror("No $home variable set.\n");
             return (NULL);
         }
         pwd = my_pwd(env[pars_env(env, "HOME=")], 5);

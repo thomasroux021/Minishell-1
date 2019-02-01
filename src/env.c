@@ -83,7 +83,7 @@ int my_setenv(char **table, shell_t *shell)
         my_puterror(" a letter.\n");
         return (-1);
     } else if (!str_alphanum(table[1])){
-        my_puterror("setenv: Variable name must contain only");
+        my_puterror("setenv: Variable name must contain");
         my_puterror(" alphanumeric characters.\n");
         return (-1);
     }
