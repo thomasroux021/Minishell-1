@@ -44,7 +44,7 @@ void print_err(int s)
     if (WTERMSIG(s) + 128 != 136)
         my_puterror(strsignal(WTERMSIG(s)));
     else
-        my_puterror("FLoating exception");
+        my_puterror("Floating exception");
     if (WCOREDUMP(s))
         my_puterror(" (core dumped)\n");
     else
