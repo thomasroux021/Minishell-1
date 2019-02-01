@@ -29,11 +29,15 @@ char *my_newpwd(char **table, char *pwd, char **env)
 {
     if (pwd[my_strlen(pwd) - 1] != '/')
         pwd = my_realloc(pwd, "/");
-    if (table[1] != NULL && my_strcmp(table[1], "~"))
+    if (table[1] != NULL) {
+        if (!my_strcmp(table[1], "~")) {
+            my_puterror("No $home variable set.\n");
+            return (NULL);
+        }
         pwd = my_realloc(pwd, table[1]);
-    else {
+    } else {
         if (pars_env(env, "HOME=") == -1) {
-            my_puterror("Error: No home directory\n");
+            my_puterror("Error: No home directory.\n");
             return (NULL);
         }
         pwd = my_pwd(env[pars_env(env, "HOME=")], 5);
@@ -41,18 +45,26 @@ char *my_newpwd(char **table, char *pwd, char **env)
     return (pwd);
 }
 
-int cd_dash(shell_t *shell)
+int cd_dash(shell_t *s)
 {
-    if (shell->pwd != NULL) {
-        if (chdir(shell->pwd) == -1) {
-            perror("Errorjsfh");
+    if (s->pwd != NULL) {
+        if (chdir(s->pwd) == -1) {
+            perror("Error");
             return (1);
         }
-        shell->mem = shell->pwd;
-        shell->pwd = shell->pwd_act;
-        shell->pwd_act = shell->mem;
-    } else
-        my_puterror("Error: No such file or directory\n");
+        s->mem = s->pwd;
+        s->pwd = s->pwd_act;
+        s->pwd_act = s->mem;
+    } else {
+        if (pars_env(s->my_env, "HOME=") == -1) {
+            my_puterror("Error: No home directory.\n");
+            return (-1);
+        }
+        s->mem = s->pwd_act;
+        s->pwd_act = my_pwd(s->my_env[pars_env(s->my_env, "HOME=")], 5);
+        s->pwd = s->mem;
+        chdir(s->pwd_act);
+    }
     return (0);
 }
 
@@ -76,11 +88,12 @@ int my_cd(char **table, shell_t *s)
         cd_dash(s);
     } else {
         if (table[1] != NULL && table[2] != NULL)
-            my_puterror("cd: Too many arguments\n");
+            my_puterror("cd: Too many arguments.\n");
         if ((s->mem = my_newpwd(table, s->pwd_act, s->my_env)) != NULL)
             (chdir(s->mem) == -1)?perror("Error"):inv_pwd(s);
     }
-    (nb_pwd = pars_env(s->my_env, "PWD=")) != -1?
-    s->my_env[nb_pwd] = my_realloc("PWD=", s->pwd_act):0;
+    while ((nb_pwd = pars_env(s->my_env, "PWD=")) == -1)
+        my_setenv(my_pwdenv(), s);
+    s->my_env[nb_pwd] = my_realloc("PWD=", s->pwd_act);
     return (0);
 }

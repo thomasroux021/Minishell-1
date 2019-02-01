@@ -49,7 +49,7 @@ int my_exit(char *buf, shell_t *s, char **table)
         free(s);
         exit(dest);
     }
-    my_puterror("exit: Invalid syntax\n");
+    my_puterror("exit: Invalid syntax.\n");
     return (-1);
 }
 

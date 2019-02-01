@@ -44,3 +44,15 @@ int is_dir(char *file)
         return (0);
     return (1);
 }
+
+char **my_pwdenv()
+{
+    char **str = malloc(sizeof(char *) * 3);
+
+    if (str == NULL)
+        exit(84);
+    str[0] = "setenv";
+    str[1] = "PWD";
+    str[2] = NULL;
+    return (str);
+}
